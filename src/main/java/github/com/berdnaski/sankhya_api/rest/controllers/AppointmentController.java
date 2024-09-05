@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/appointments")
 @RequiredArgsConstructor
@@ -29,5 +32,17 @@ public class AppointmentController {
         } catch (RuntimeException e ) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Appointment>> listAll() {
+        var appointments = appointmentService.listAll();
+        return ResponseEntity.ok(appointments);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable UUID id, @RequestBody AppointmentDTO updateAppointmentDTO) {
+        appointmentService.updateAppointmentsById(id, updateAppointmentDTO);
+        return ResponseEntity.noContent().build();
     }
 }

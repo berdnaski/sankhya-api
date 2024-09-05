@@ -8,6 +8,7 @@ import github.com.berdnaski.sankhya_api.rest.dto.AppointmentDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -21,6 +22,12 @@ public class AppointmentService {
         Customer customer = customerRepository.findById(UUID.fromString(appointmentDTO.customerId()))
                 .orElseThrow(() -> new RuntimeException("Customer not found with ID: " + appointmentDTO.customerId()));
 
+        boolean customerHasAppointment = appointmentRepository.existsByCustomer(customer);
+
+        if(customerHasAppointment) {
+            throw new RuntimeException("Customer already has an appointment");
+        }
+
         Appointment appointment = new Appointment(
                 UUID.randomUUID(),
                 appointmentDTO.description(),
@@ -33,5 +40,40 @@ public class AppointmentService {
     public Appointment getAppointmentById(String appointmentId) {
         return appointmentRepository.findById(UUID.fromString(appointmentId))
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
+    }
+
+    public List<Appointment> listAll() {
+        return appointmentRepository.findAll();
+    }
+
+    public void updateAppointmentsById(UUID appointmentId, AppointmentDTO updateAppointmentDTO) {
+        var appointmentEntity = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Appointment not found with ID: " + appointmentId));
+
+        if (updateAppointmentDTO.description() != null && !updateAppointmentDTO.description().equals(appointmentEntity.getDescription())) {
+            appointmentEntity.setDescription(updateAppointmentDTO.description());
+        }
+
+        if (updateAppointmentDTO.appointmentDescription() != null && !updateAppointmentDTO.appointmentDescription().equals(appointmentEntity.getDescription())) {
+            appointmentEntity.setDescription(updateAppointmentDTO.appointmentDescription()); // Atualiza a descrição, se for esse o caso
+        }
+
+        if (updateAppointmentDTO.appointmentDate() != null && !updateAppointmentDTO.appointmentDate().equals(appointmentEntity.getAppointmentDate())) {
+            appointmentEntity.setAppointmentDate(updateAppointmentDTO.appointmentDate());
+        }
+
+        if (updateAppointmentDTO.customerId() != null) {
+            Customer customer = customerRepository.findById(UUID.fromString(updateAppointmentDTO.customerId()))
+                    .orElseThrow(() -> new RuntimeException("Customer not found with ID: " + updateAppointmentDTO.customerId()));
+
+            boolean hasExistingAppointment = appointmentRepository.existsByCustomer(customer);
+            if (hasExistingAppointment && !customer.equals(appointmentEntity.getCustomer())) {
+                throw new IllegalArgumentException("Customer already has an existing appointment");
+            }
+
+            appointmentEntity.setCustomer(customer);
+        }
+
+        appointmentRepository.save(appointmentEntity);
     }
 }
