@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -25,4 +26,7 @@ public class Customer {
     @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "\\d{10,15}", message = "Phone number must be between 10 and 15 digits")
     private String phone;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Appointment> appointments;
 }
