@@ -3,6 +3,7 @@ package github.com.berdnaski.sankhya_api.rest.controllers;
 import github.com.berdnaski.sankhya_api.domain.entities.Customer;
 import github.com.berdnaski.sankhya_api.rest.dto.CreateCustomerDTO;
 import github.com.berdnaski.sankhya_api.rest.dto.ListCustomerDTO;
+import github.com.berdnaski.sankhya_api.rest.dto.PhoneInfoDTO;
 import github.com.berdnaski.sankhya_api.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,17 +26,17 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomerById(@PathVariable String id) {
+    public ResponseEntity<ListCustomerDTO> getCustomerById(@PathVariable String id) {
         try {
-            Customer customer = customerService.getCustomerById(id);
-            return ResponseEntity.ok(customer);
-        } catch (RuntimeException e ) {
+            ListCustomerDTO customerDTO = customerService.getCustomerById(id);
+            return ResponseEntity.ok(customerDTO);
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
     @GetMapping("/phone/{phone}")
-    public ResponseEntity<ListCustomerDTO> getCustomerByPhone(@PathVariable String phone) {
+    public ResponseEntity<PhoneInfoDTO> getCustomerByPhone(@PathVariable String phone) {
         var customer = customerService.findByPhone(phone);
 
         if (customer.isPresent()) {

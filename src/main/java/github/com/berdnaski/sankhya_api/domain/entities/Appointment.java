@@ -1,7 +1,9 @@
 package github.com.berdnaski.sankhya_api.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,10 +24,11 @@ public class Appointment {
     @NotBlank(message = "Description is required")
     private String description;
 
-    @NotBlank(message = "Date and time are required")
+    @NotNull(message = "Date and time are required")
     private LocalDateTime appointmentDate;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
+    @JsonBackReference
     private Customer customer;
 }

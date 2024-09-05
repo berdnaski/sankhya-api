@@ -2,11 +2,13 @@ package github.com.berdnaski.sankhya_api.service;
 
 import github.com.berdnaski.sankhya_api.domain.entities.Customer;
 import github.com.berdnaski.sankhya_api.domain.repositories.CustomerRepository;
+import github.com.berdnaski.sankhya_api.domain.repositories.AppointmentRepository;
+import github.com.berdnaski.sankhya_api.rest.dto.AppointmentDTO;
 import github.com.berdnaski.sankhya_api.rest.dto.CreateCustomerDTO;
 import github.com.berdnaski.sankhya_api.rest.dto.ListCustomerDTO;
+import github.com.berdnaski.sankhya_api.rest.dto.PhoneInfoDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final AppointmentRepository appointmentRepository;
 
     public Customer createCustomer(CreateCustomerDTO createCustomerDTO) {
         if(customerRepository.existsByPhone(createCustomerDTO.phone())) {
@@ -32,23 +35,55 @@ public class CustomerService {
         return customerRepository.save(customer);
     }
 
-    public Customer getCustomerById(String customerId) {
-        return customerRepository.findById(UUID.fromString(customerId)).orElseThrow(() -> new RuntimeException("Customer id not found: " + customerId));
+    public ListCustomerDTO getCustomerById(String customerId) {
+        Customer customer = customerRepository.findById(UUID.fromString(customerId))
+                .orElseThrow(() -> new RuntimeException("Customer id not found: " + customerId));
+
+        List<AppointmentDTO> appointments = customer.getAppointments().stream()
+                .map(appointment -> new AppointmentDTO(
+                        appointment.getId().toString(),
+                        appointment.getDescription(),
+                        appointment.getAppointmentDate(),
+                        customer.getId().toString()
+                ))
+                .collect(Collectors.toList());
+
+        return new ListCustomerDTO(
+                customer.getId().toString(),
+                customer.getName(),
+                customer.getPhone(),
+                appointments
+        );
     }
 
-
-    public Optional<ListCustomerDTO> findByPhone(String phone) {
-        return customerRepository
-                    .findByPhone(phone)
-                .map(customer -> new ListCustomerDTO(customer.getName(), customer.getPhone()));
+    public Optional<PhoneInfoDTO> findByPhone(String phone) {
+        return customerRepository.findByPhone(phone)
+                .map(customer -> new PhoneInfoDTO(
+                        customer.getName(),
+                        customer.getPhone()
+                ));
     }
 
     public List<ListCustomerDTO> listAll() {
         return customerRepository.findAll().stream()
-                .map(customer -> new ListCustomerDTO(
-                        customer.getName(),
-                        customer.getPhone()
-                )).collect(Collectors.toList());
+                .map(customer -> {
+                    List<AppointmentDTO> appointments = customer.getAppointments().stream()
+                            .map(appointment -> new AppointmentDTO(
+                                    appointment.getId().toString(),
+                                    appointment.getDescription(),
+                                    appointment.getAppointmentDate(),
+                                    customer.getId().toString()
+                            ))
+                            .collect(Collectors.toList());
+
+                    return new ListCustomerDTO(
+                            customer.getId().toString(),
+                            customer.getName(),
+                            customer.getPhone(),
+                            appointments
+                    );
+                })
+                .collect(Collectors.toList());
     }
 
     public void updateCustomerById(UUID customerId, CreateCustomerDTO updateCustomerDTO) {

@@ -1,5 +1,6 @@
 package github.com.berdnaski.sankhya_api.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -28,5 +29,13 @@ public class Customer {
     private String phone;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Appointment> appointments;
+
+    public Customer(UUID uuid, String name, String phone) {
+        this.id = uuid;
+        this.name = name;
+        this.phone = phone;
+        this.appointments = List.of();
+    }
 }
