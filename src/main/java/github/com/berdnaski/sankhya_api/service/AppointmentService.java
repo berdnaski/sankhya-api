@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -75,5 +76,16 @@ public class AppointmentService {
         }
 
         appointmentRepository.save(appointmentEntity);
+    }
+
+    public void deleteAppointmentById(String appointmentId) {
+        UUID id = UUID.fromString(appointmentId);
+        Optional<Appointment> appointmentExists = appointmentRepository.findById(id);
+
+        if(appointmentExists.isPresent()) {
+            appointmentRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Appointment not found with ID: " + appointmentId);
+        }
     }
 }

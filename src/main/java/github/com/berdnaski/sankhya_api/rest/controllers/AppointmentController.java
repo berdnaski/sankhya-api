@@ -45,4 +45,10 @@ public class AppointmentController {
         appointmentService.updateAppointmentsById(id, updateAppointmentDTO);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        appointmentService.deleteAppointmentById(id);
+        return ResponseEntity.noContent().build();
+    }
 }
