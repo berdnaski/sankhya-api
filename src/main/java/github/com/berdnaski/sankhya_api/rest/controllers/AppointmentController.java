@@ -12,43 +12,53 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/appointments")
+@RequestMapping("/customers/{customerId}/appointments")
 @RequiredArgsConstructor
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
 
     @PostMapping
-    public ResponseEntity<Appointment> createAppointment(@RequestBody AppointmentDTO createAppointmentDTO) {
+    public ResponseEntity<Appointment> createAppointment(@PathVariable UUID customerId, @RequestBody AppointmentDTO createAppointmentDTO) {
+        createAppointmentDTO = createAppointmentDTO.withCustomerId(customerId.toString());
         Appointment createdAppointment = appointmentService.createAppointment(createAppointmentDTO);
+
         return ResponseEntity.ok(createdAppointment);
     }
 
+    @GetMapping
+    public ResponseEntity<List<Appointment>> listAppointmentsByCustomer(@PathVariable UUID customerId) {
+        List<Appointment> appointments = appointmentService.listAppointmentsByCustomer(customerId);
+
+        return ResponseEntity.ok(appointments);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Appointment> getAppointmentById(@PathVariable String id) {
+    public ResponseEntity<Appointment> getAppointmentById(@PathVariable UUID customerId, @PathVariable UUID id) {
         try {
-            Appointment appointmentDTO = appointmentService.getAppointmentById(id);
-            return ResponseEntity.ok(appointmentDTO);
-        } catch (RuntimeException e ) {
+            Appointment appointment = appointmentService.getAppointmentById(id);
+            if (!appointment.getCustomer().getId().equals(customerId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+            return ResponseEntity.ok(appointment);
+
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
-    @GetMapping
-    public ResponseEntity<List<Appointment>> listAll() {
-        var appointments = appointmentService.listAll();
-        return ResponseEntity.ok(appointments);
-    }
-
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable UUID id, @RequestBody AppointmentDTO updateAppointmentDTO) {
+    public ResponseEntity<Void> update(@PathVariable UUID customerId, @PathVariable UUID id, @RequestBody AppointmentDTO updateAppointmentDTO) {
+        updateAppointmentDTO = updateAppointmentDTO.withCustomerId(customerId.toString());
         appointmentService.updateAppointmentsById(id, updateAppointmentDTO);
+
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable String id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID customerId, @PathVariable UUID id) {
         appointmentService.deleteAppointmentById(id);
+
         return ResponseEntity.noContent().build();
     }
 }
