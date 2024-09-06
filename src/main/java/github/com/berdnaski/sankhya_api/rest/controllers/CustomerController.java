@@ -16,7 +16,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/customers")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000") // Adicione esta linha
 public class CustomerController {
+
     private final CustomerService customerService;
 
     @PostMapping
