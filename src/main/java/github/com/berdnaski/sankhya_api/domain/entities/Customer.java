@@ -28,14 +28,18 @@ public class Customer {
     @Pattern(regexp = "\\d{10,15}", message = "Phone number must be between 10 and 15 digits")
     private String phone;
 
+    @NotBlank(message = "Password is required")
+    private String password;
+
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Appointment> appointments;
 
-    public Customer(UUID uuid, String name, String phone) {
+    public Customer(UUID uuid, String name, String phone, String password) {
         this.id = uuid;
         this.name = name;
         this.phone = phone;
+        this.password = password;
         this.appointments = List.of();
     }
 }

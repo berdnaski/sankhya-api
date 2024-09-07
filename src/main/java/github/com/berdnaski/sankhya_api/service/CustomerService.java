@@ -8,6 +8,7 @@ import github.com.berdnaski.sankhya_api.rest.dto.CreateCustomerDTO;
 import github.com.berdnaski.sankhya_api.rest.dto.ListCustomerDTO;
 import github.com.berdnaski.sankhya_api.rest.dto.PhoneInfoDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,16 +22,18 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final AppointmentRepository appointmentRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public Customer createCustomer(CreateCustomerDTO createCustomerDTO) {
-        if(customerRepository.existsByPhone(createCustomerDTO.phone())) {
+        if (customerRepository.existsByPhone(createCustomerDTO.phone())) {
             throw new IllegalArgumentException("Customer with given phone already exists");
         }
 
         Customer customer = new Customer(
                 UUID.randomUUID(),
                 createCustomerDTO.name(),
-                createCustomerDTO.phone()
+                createCustomerDTO.phone(),
+                passwordEncoder.encode(createCustomerDTO.password())
         );
         return customerRepository.save(customer);
     }
@@ -60,7 +63,8 @@ public class CustomerService {
         return customerRepository.findByPhone(phone)
                 .map(customer -> new PhoneInfoDTO(
                         customer.getName(),
-                        customer.getPhone()
+                        customer.getPhone(),
+                        customer.getPassword()
                 ));
     }
 

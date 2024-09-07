@@ -1,4 +1,4 @@
-package github.com.berdnaski.sankhya_api.config;
+package github.com.berdnaski.sankhya_api.security.cors;
 
 
 import org.springframework.context.annotation.Configuration;

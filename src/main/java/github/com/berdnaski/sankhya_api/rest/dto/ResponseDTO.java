@@ -1,8 +1,8 @@
 package github.com.berdnaski.sankhya_api.rest.dto;
 
-public record CreateCustomerDTO(
+public record ResponseDTO(
         String name,
         String phone,
-        String password
+        String token
 ) {
 }
