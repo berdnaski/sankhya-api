@@ -20,12 +20,6 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-    @PostMapping
-    public ResponseEntity<Customer> createCustomer(@RequestBody CreateCustomerDTO createCustomerDTO) {
-        Customer createdCustomer = customerService.createCustomer(createCustomerDTO);
-        return ResponseEntity.ok(createdCustomer);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<ListCustomerDTO> getCustomerById(@PathVariable String id) {
         try {

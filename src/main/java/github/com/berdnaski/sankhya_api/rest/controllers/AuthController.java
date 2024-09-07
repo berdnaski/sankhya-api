@@ -19,13 +19,12 @@ import java.util.Optional;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final CustomerService customerService;
     private final TokenService tokenService;
     private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody CreateCustomerDTO body) {
+    public ResponseEntity register(@RequestBody CreateCustomerDTO body) {
         Optional<Customer> customer = this.customerRepository.findByPhone(body.phone());
 
         if(customer.isEmpty()) {

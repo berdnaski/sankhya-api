@@ -21,22 +21,6 @@ import java.util.stream.Collectors;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
-    private final AppointmentRepository appointmentRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    public Customer createCustomer(CreateCustomerDTO createCustomerDTO) {
-        if (customerRepository.existsByPhone(createCustomerDTO.phone())) {
-            throw new IllegalArgumentException("Customer with given phone already exists");
-        }
-
-        Customer customer = new Customer(
-                UUID.randomUUID(),
-                createCustomerDTO.name(),
-                createCustomerDTO.phone(),
-                passwordEncoder.encode(createCustomerDTO.password())
-        );
-        return customerRepository.save(customer);
-    }
 
     public ListCustomerDTO getCustomerById(String customerId) {
         Customer customer = customerRepository.findById(UUID.fromString(customerId))
