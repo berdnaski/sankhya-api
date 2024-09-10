@@ -2,13 +2,11 @@ package github.com.berdnaski.sankhya_api.service;
 
 import github.com.berdnaski.sankhya_api.domain.entities.Customer;
 import github.com.berdnaski.sankhya_api.domain.repositories.CustomerRepository;
-import github.com.berdnaski.sankhya_api.domain.repositories.AppointmentRepository;
 import github.com.berdnaski.sankhya_api.rest.dto.AppointmentDTO;
 import github.com.berdnaski.sankhya_api.rest.dto.CreateCustomerDTO;
 import github.com.berdnaski.sankhya_api.rest.dto.ListCustomerDTO;
 import github.com.berdnaski.sankhya_api.rest.dto.PhoneInfoDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

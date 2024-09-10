@@ -15,8 +15,7 @@
 	<description>Sankhya-api</description>
 	<properties>
 		<java.version>21</java.version>
-		<!-- Alterar o tipo de empacotamento para WAR -->
-		<packaging>war</packaging>
+		<packaging>jar</packaging>
 	</properties>
 	<dependencies>
 		<dependency>
