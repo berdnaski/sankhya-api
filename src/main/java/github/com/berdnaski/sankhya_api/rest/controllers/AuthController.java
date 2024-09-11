@@ -35,7 +35,7 @@ public class AuthController {
             this.customerRepository.save(newCustomer);
 
             String token = this.tokenService.generateToken(newCustomer);
-            return ResponseEntity.ok(new ResponseDTO(newCustomer.getName(), newCustomer.getPhone(), token));
+            return ResponseEntity.ok(new ResponseDTO(newCustomer.getId() ,newCustomer.getName(), newCustomer.getPhone(), token));
         }
         return ResponseEntity.badRequest().build();
     }
@@ -45,7 +45,7 @@ public class AuthController {
         Customer customer = this.customerRepository.findByPhone(body.phone()).orElseThrow(() -> new RuntimeException("Customer not found"));
         if(passwordEncoder.matches(body.password(), customer.getPassword())) {
             String token = this.tokenService.generateToken(customer);
-            return ResponseEntity.ok(new ResponseDTO(customer.getName(), customer.getPhone(), token));
+            return ResponseEntity.ok(new ResponseDTO(customer.getId(), customer.getName(), customer.getPhone(), token));
         }
         return ResponseEntity.badRequest().build();
     }

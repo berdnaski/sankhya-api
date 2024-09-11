@@ -18,7 +18,7 @@ public class AppointmentController {
 
     private final AppointmentService appointmentService;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Appointment> createAppointment(@PathVariable UUID customerId, @RequestBody AppointmentDTO createAppointmentDTO) {
         createAppointmentDTO = createAppointmentDTO.withCustomerId(customerId.toString());
         Appointment createdAppointment = appointmentService.createAppointment(createAppointmentDTO);
